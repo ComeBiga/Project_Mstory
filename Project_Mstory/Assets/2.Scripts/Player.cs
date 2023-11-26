@@ -7,6 +7,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private BoxCollider2D boxCollider;
 
+    [SerializeField]
+    private Animator animator;
+
     private void Update()
     {
         if (Input.GetButtonDown("Submit"))
@@ -25,6 +28,8 @@ public class Player : MonoBehaviour
                     break;
                 }
             }
+
+            animator.SetTrigger("Attack");
         }
     }
 }

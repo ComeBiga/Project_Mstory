@@ -587,6 +587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxCollider: {fileID: 1737375278}
+  animator: {fileID: 1737375277}
 --- !u!50 &1737375280
 Rigidbody2D:
   serializedVersion: 4

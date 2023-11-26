@@ -23,28 +23,48 @@ public class CharacterMovement : MonoBehaviour
         animator.SetFloat("Horizontal", horizontal);
         animator.SetFloat("Vertical", vertical);
 
-        if (Input.GetButtonDown("Horizontal") && horizontal > 0.001f)
+        if (Input.GetButton("Horizontal") && horizontal > 0.001f)
         {
-            
-            //mDirection = Vector3.right;
+            mDirection = Vector3.right;
+            animator.SetFloat("hDirection", mDirection.x);
+            animator.SetFloat("vDirection", 0);
         }
-        if (Input.GetButtonDown("Horizontal") && horizontal < -0.001f)
+        if (Input.GetButton("Horizontal") && horizontal < -0.001f)
         {
-            
-            //mDirection = Vector3.left;
+            mDirection = Vector3.left;
+            animator.SetFloat("hDirection", mDirection.x);
+            animator.SetFloat("vDirection", 0);
         }
-        if (Input.GetButtonDown("Vertical") && vertical > 0.001f)
+        if (Input.GetButton("Vertical") && vertical > 0.001f)
         {
-            
-            //mDirection = Vector3.up;
+            mDirection = Vector3.up;
+            animator.SetFloat("hDirection", 0);
+            animator.SetFloat("vDirection", mDirection.y);
         }
-        if (Input.GetButtonDown("Vertical") && vertical < -0.001f)
+        if (Input.GetButton("Vertical") && vertical < -0.001f)
         {
-            
-            //mDirection = Vector3.down;
+            mDirection = Vector3.down;
+            animator.SetFloat("hDirection", 0);
+            animator.SetFloat("vDirection", mDirection.y);
         }
+
+        //if (Input.GetButtonUp("Horizontal") && mDirection.x > .001f)
+        //{
+        //    animator.SetTrigger("Idle_Right");
+        //}
+        //if (Input.GetButtonUp("Horizontal") && mDirection.x < -.001f)
+        //{
+        //    animator.SetTrigger("Idle_Left");
+        //}
+        //if (Input.GetButtonUp("Vertical") && mDirection.y > .001f)
+        //{
+        //    animator.SetTrigger("Idle_Back");
+        //}
+        //if (Input.GetButtonUp("Vertical") && mDirection.y < -.001f)
+        //{
+        //    animator.SetTrigger("Idle_Front");
+        //}
 
         transform.position += moveSpeed * direction * Time.deltaTime;
-
     }
 }
