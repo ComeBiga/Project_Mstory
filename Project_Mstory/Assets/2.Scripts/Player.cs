@@ -25,11 +25,8 @@ public class Player : MonoBehaviour
     [Header("Animation")]
     [SerializeField]
     private Animator animator;
-
-
     [SerializeField]
     private float moveSpeed = 10f;
-
 
     private void Update()
     {
