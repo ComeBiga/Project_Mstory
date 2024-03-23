@@ -27,6 +27,15 @@ public class Player : MonoBehaviour
     private Animator animator;
     [SerializeField]
     private float moveSpeed = 10f;
+    [SerializeField]
+    private int attackPower = 4;
+    [SerializeField]
+    private int exp = 0;
+
+    public void AddEXP(int amount)
+    {
+        exp += amount;
+    }
 
     private void Update()
     {
@@ -137,7 +146,7 @@ public class Player : MonoBehaviour
         {
             if (collider.tag == "Monster")
             {
-                collider.gameObject.GetComponent<Monster>().Damage(1);
+                collider.gameObject.GetComponent<Monster>().Damage(attackPower, this);
                 Debug.Log($"{mDirection} Attack to '{collider.gameObject.name}'");
                 break;
             }
