@@ -32,9 +32,22 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int exp = 0;
 
+    private List<Quest> mQuests = new List<Quest>(100);
+
     public void AddEXP(int amount)
     {
         exp += amount;
+    }
+
+    public void AddQuest(Quest quest)
+    {
+        mQuests.Add(quest);
+    }
+
+    public void UpdateQuest()
+    {
+        Quest targetQuest = mQuests[0];
+        targetQuest.AddAmount(1);
     }
 
     private void Update()
@@ -51,22 +64,15 @@ public class Player : MonoBehaviour
             {
                 if (collider.tag == "NPC")
                 {
-                    Debug.Log($"{collider.gameObject.name}");
+                    NPC targetNPC = collider.gameObject.GetComponent<NPC>();
+                    targetNPC.InteractTo(this);
+
+                    // Debug.Log($"{collider.gameObject.name}");
                     break;
                 }
             }
 
             UpdateAttack();
-            //count = boxCollider_FrontAttack.OverlapCollider(filter, results);
-
-            //foreach (Collider2D collider in results)
-            //{
-            //    if (collider.tag == "Monster")
-            //    {
-            //        Debug.Log($"{collider.gameObject.name}");
-            //        break;
-            //    }
-            //}
 
             animator.SetTrigger("Attack");
         }
@@ -146,8 +152,14 @@ public class Player : MonoBehaviour
         {
             if (collider.tag == "Monster")
             {
-                collider.gameObject.GetComponent<Monster>().Damage(attackPower, this);
-                Debug.Log($"{mDirection} Attack to '{collider.gameObject.name}'");
+                Monster targetMonster = collider.gameObject.GetComponent<Monster>();
+                targetMonster.Damage(attackPower, 
+                                    onDied : () =>
+                                    {
+                                        UpdateQuest();
+                                    });
+
+                // Debug.Log($"{mDirection} Attack to '{collider.gameObject.name}'");
                 break;
             }
         }

@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
+    public event Action<Monster> onDied = null;
+
     [SerializeField]
     private int health;
     [SerializeField]
@@ -19,7 +22,7 @@ public class Monster : MonoBehaviour
 
     private Player mTargetPlayer;
 
-    public void Damage(int damage, Player attacker)
+    public void Damage(int damage, Action onDied = null)
     {
         health -= damage;
 
@@ -28,12 +31,15 @@ public class Monster : MonoBehaviour
         Debug.Log($"hp : {health}");
 
         if (health <= 0)
-            Die(attacker);
+        {
+            onDied?.Invoke();
+            Die();
+        }
     }
 
-    public void Die(Player attacker)
+    public void Die()
     {
-        attacker.AddEXP(exp);
+        onDied?.Invoke(this);
 
         Destroy(gameObject);
     }
@@ -54,7 +60,7 @@ public class Monster : MonoBehaviour
             {
                 if (collider.gameObject.CompareTag("Player"))
                 {
-                    Debug.Log($"Detected! {collider.gameObject.name}");
+                    // Debug.Log($"Detected! {collider.gameObject.name}");
 
                     mTargetPlayer = collider.transform.GetComponent<Player>();
                 }
