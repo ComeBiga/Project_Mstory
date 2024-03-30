@@ -32,11 +32,28 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int exp = 0;
 
+    [Header("HP")]
+    [SerializeField]
+    private int maxHP = 0;
+    [SerializeField]
+    private int currentHP = 0;
+    [SerializeField]
+    private HpBar hpBar;
+
     private List<Quest> mQuests = new List<Quest>(100);
 
     public void AddEXP(int amount)
     {
         exp += amount;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentHP -= damage;
+
+        hpBar.Set(currentHP);
+
+        Debug.Log($"Player is attacked!(currentHP : {currentHP}");
     }
 
     public void AddQuest(Quest quest)
@@ -46,8 +63,19 @@ public class Player : MonoBehaviour
 
     public void UpdateQuest()
     {
+        if(mQuests.Count < 1)
+            return;
+
         Quest targetQuest = mQuests[0];
         targetQuest.AddAmount(1);
+    }
+
+    private void Start()
+    {
+        currentHP = maxHP;
+
+        hpBar.Init(maxHP);
+        hpBar.Set(currentHP);
     }
 
     private void Update()

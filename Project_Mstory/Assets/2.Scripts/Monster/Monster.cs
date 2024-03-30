@@ -19,8 +19,13 @@ public class Monster : MonoBehaviour
     private CircleCollider2D colliderAttackRange;
     [SerializeField]
     private float moveSpeed = 5f;
+    [SerializeField]
+    private float attackInterval = 3f;
+    [SerializeField]
+    private int attackDamage = 1;
 
     private Player mTargetPlayer;
+    private float mAttackTimer;
 
     public void Damage(int damage, Action onDied = null)
     {
@@ -42,6 +47,11 @@ public class Monster : MonoBehaviour
         onDied?.Invoke(this);
 
         Destroy(gameObject);
+    }
+
+    private void Start()
+    {
+        mAttackTimer = 0f;
     }
 
     private void Update()
@@ -66,12 +76,48 @@ public class Monster : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            if(mTargetPlayer != null)
+                mTargetPlayer = null;
+        }
 
         if(mTargetPlayer != null)
         {
-            Vector3 direction = mTargetPlayer.transform.position - transform.position;
+            var attackColliders = new List<Collider2D>();
+            int searchCount_Attack = colliderAttackRange.OverlapCollider(filter, attackColliders);
+            bool bAttaking = false;
 
-            transform.position += direction.normalized * moveSpeed * Time.deltaTime;
+            if(searchCount_Attack > 0)
+            {
+                foreach (Collider2D collider in attackColliders)
+                {
+                    if (collider.gameObject.CompareTag("Player"))
+                    {
+                        // Debug.Log($"Detected! {collider.gameObject.name}");
+
+                        bAttaking = true;
+                    }
+                }
+            }
+
+            if(bAttaking)
+            {
+                if(mAttackTimer > attackInterval)
+                {
+                    mAttackTimer = 0f;
+
+                    mTargetPlayer.TakeDamage(attackDamage);
+                }
+
+                mAttackTimer += Time.deltaTime;
+            }
+            else
+            {
+                Vector3 direction = mTargetPlayer.transform.position - transform.position;
+
+                transform.position += direction.normalized * moveSpeed * Time.deltaTime;
+            }
         }
     }
 }
