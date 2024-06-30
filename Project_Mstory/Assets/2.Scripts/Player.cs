@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     private EDirection mDirection = EDirection.Front;
     public EDirection Direction => mDirection;
 
+    public int AttackPower => attackPower;
+
     [SerializeField]
     private BoxCollider2D boxCollider;
 
@@ -42,6 +44,13 @@ public class Player : MonoBehaviour
 
     private List<Quest> mQuests = new List<Quest>(100);
 
+    private PlayerMoveState mCurrentState;
+    public PlayerMoveIdleState MoveIdleState { get; private set; }
+    public PlayerMoveUpState MoveUpState { get; private set; }
+    public PlayerMoveDownState MoveDownState { get; private set; }
+    public PlayerMoveLeftState MoveLeftState { get; private set; }
+    public PlayerMoveRightState MoveRightState { get; private set; }
+
     public void AddEXP(int amount)
     {
         exp += amount;
@@ -70,12 +79,33 @@ public class Player : MonoBehaviour
         targetQuest.AddAmount(1);
     }
 
+    public void SetDirection(EDirection direction)
+    {
+        mDirection = direction;
+    }
+
+    public void ChangeState(PlayerMoveState state)
+    {
+        state.OnExitState();
+
+        mCurrentState = state;
+        mCurrentState.OnEnterState();
+    }
+
     private void Start()
     {
         currentHP = maxHP;
 
         hpBar.Init(maxHP);
         hpBar.Set(currentHP);
+
+        MoveIdleState = new PlayerMoveIdleState(this, animator, null);
+        MoveUpState = new PlayerMoveUpState(this, animator, boxCollider_BackAttack);
+        MoveDownState = new PlayerMoveDownState(this, animator, boxCollider_FrontAttack);
+        MoveLeftState = new PlayerMoveLeftState(this, animator, boxCollider_LeftAttack);
+        MoveRightState = new PlayerMoveRightState(this, animator, boxCollider_RightAttack);
+
+        ChangeState(MoveIdleState);
     }
 
     private void Update()
@@ -100,9 +130,10 @@ public class Player : MonoBehaviour
                 }
             }
 
-            UpdateAttack();
+            mCurrentState.Attack();
+            //UpdateAttack();
 
-            animator.SetTrigger("Attack");
+            //animator.SetTrigger("Attack");
         }
 
         UpdateMovement();
@@ -116,33 +147,35 @@ public class Player : MonoBehaviour
 
         transform.position += moveSpeed * deltaDirection * Time.deltaTime;
 
-        animator.SetFloat("Horizontal", horizontal);
-        animator.SetFloat("Vertical", vertical);
+        //animator.SetFloat("Horizontal", horizontal);
+        //animator.SetFloat("Vertical", vertical);
 
-        if (Input.GetButton("Horizontal") && horizontal > 0.001f)
-        {
-            mDirection = EDirection.Right;
-            animator.SetFloat("hDirection", 1f);
-            animator.SetFloat("vDirection", 0);
-        }
-        if (Input.GetButton("Horizontal") && horizontal < -0.001f)
-        {
-            mDirection = EDirection.Left;
-            animator.SetFloat("hDirection", -1f);
-            animator.SetFloat("vDirection", 0);
-        }
-        if (Input.GetButton("Vertical") && vertical > 0.001f)
-        {
-            mDirection = EDirection.Back;
-            animator.SetFloat("hDirection", 0);
-            animator.SetFloat("vDirection", 1f);
-        }
-        if (Input.GetButton("Vertical") && vertical < -0.001f)
-        {
-            mDirection = EDirection.Front;
-            animator.SetFloat("hDirection", 0);
-            animator.SetFloat("vDirection", -1f);
-        }
+        //if (Input.GetButton("Horizontal") && horizontal > 0.001f)
+        //{
+        //    mDirection = EDirection.Right;
+        //    animator.SetFloat("hDirection", 1f);
+        //    animator.SetFloat("vDirection", 0);
+        //}
+        //if (Input.GetButton("Horizontal") && horizontal < -0.001f)
+        //{
+        //    mDirection = EDirection.Left;
+        //    animator.SetFloat("hDirection", -1f);
+        //    animator.SetFloat("vDirection", 0);
+        //}
+        //if (Input.GetButton("Vertical") && vertical > 0.001f)
+        //{
+        //    mDirection = EDirection.Back;
+        //    animator.SetFloat("hDirection", 0);
+        //    animator.SetFloat("vDirection", 1f);
+        //}
+        //if (Input.GetButton("Vertical") && vertical < -0.001f)
+        //{
+        //    mDirection = EDirection.Front;
+        //    animator.SetFloat("hDirection", 0);
+        //    animator.SetFloat("vDirection", -1f);
+        //}
+
+        mCurrentState.OnUpdate(deltaDirection);
     }
 
     private void UpdateAttack()
@@ -192,4 +225,5 @@ public class Player : MonoBehaviour
             }
         }
     }
+
 }
