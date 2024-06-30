@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -31,8 +33,6 @@ public class Player : MonoBehaviour
     private float moveSpeed = 10f;
     [SerializeField]
     private int attackPower = 4;
-    [SerializeField]
-    private int exp = 0;
 
     [Header("HP")]
     [SerializeField]
@@ -41,6 +41,17 @@ public class Player : MonoBehaviour
     private int currentHP = 0;
     [SerializeField]
     private HpBar hpBar;
+
+    [Header("EXP")]
+    [SerializeField]
+    private int maxExp = 10;
+    [SerializeField]
+    private int currentExp = 0;
+    [SerializeField]
+    private Slider _sliderEXP;
+    [SerializeField]
+    private TextMeshProUGUI _txtLevel;
+    private int mLevel = 1;
 
     private List<Quest> mQuests = new List<Quest>(100);
 
@@ -53,7 +64,18 @@ public class Player : MonoBehaviour
 
     public void AddEXP(int amount)
     {
-        exp += amount;
+        currentExp += amount;
+
+        if (currentExp >= maxExp)
+        {
+            currentExp = 0;
+            maxExp += (int)(maxExp / 2f);
+            ++mLevel;
+
+            _txtLevel.text = $"Lv {mLevel}";
+        }
+
+        _sliderEXP.value = (float)currentExp / maxExp;
     }
 
     public void TakeDamage(int damage)
@@ -98,6 +120,9 @@ public class Player : MonoBehaviour
 
         hpBar.Init(maxHP);
         hpBar.Set(currentHP);
+
+        _sliderEXP.value = (float)currentExp / maxExp;
+        _txtLevel.text = $"Lv {mLevel}";
 
         MoveIdleState = new PlayerMoveIdleState(this, animator, null);
         MoveUpState = new PlayerMoveUpState(this, animator, boxCollider_BackAttack);
@@ -218,6 +243,7 @@ public class Player : MonoBehaviour
                                     onDied : () =>
                                     {
                                         UpdateQuest();
+                                        AddEXP(3);
                                     });
 
                 // Debug.Log($"{mDirection} Attack to '{collider.gameObject.name}'");
@@ -225,5 +251,4 @@ public class Player : MonoBehaviour
             }
         }
     }
-
 }

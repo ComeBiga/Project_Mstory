@@ -37,6 +37,7 @@ public abstract class PlayerMoveState
                                     onDied: () =>
                                     {
                                         mPlayer.UpdateQuest();
+                                        mPlayer.AddEXP(3);
                                     });
 
                 // Debug.Log($"{mDirection} Attack to '{collider.gameObject.name}'");
