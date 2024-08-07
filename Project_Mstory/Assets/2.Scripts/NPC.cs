@@ -6,37 +6,52 @@ public class NPC : MonoBehaviour
 {
     private Quest mQuest;
 
-    public void InteractTo(Player player)
+    public void Interact()
     {
-        if (mQuest.Active)
+        if (QuestManager.instance.IsActivated(mQuest))
         {
-            if(mQuest.Completed)
+            if(mQuest.IsCompleted())
             {
-                GiveRewardTo(player);
+                GiveRewardTo();
             }
         }
         else
         {
-            GiveQuestTo(player);
+            GiveQuestTo();
         }
     }
 
     private void Start()
     {
-        mQuest = new Quest();
-        mQuest.Init(1);
+        //mQuest = new Quest();
+        //mQuest.Init(1);
+
+        var newQuest = new Quest();
+
+        var newObjective = new QuestObjective();
+        newObjective.Init(QuestObjective.EType.KillEnemies, 1);
+
+        var questObjectives = new List<QuestObjective>();
+        questObjectives.Add(newObjective);
+
+        var questReward = new QuestReward();
+        questReward.exp = 3;
+
+        newQuest.Init(0, questObjectives, questReward);
+
+        mQuest = newQuest;
     }
 
-    private void GiveQuestTo(Player player)
+    private void GiveQuestTo()
     {
-        mQuest.Activate();
-        player.AddQuest(mQuest);
+        QuestManager.instance.ActivateQuest(mQuest);
 
         Debug.Log($"NPC gives quest to player!");
     }
 
-    private void GiveRewardTo(Player player)
+    private void GiveRewardTo()
     {
         Debug.Log($"NPC gives reward to player!");
+        QuestManager.instance.GiveReward(mQuest);
     }
 }

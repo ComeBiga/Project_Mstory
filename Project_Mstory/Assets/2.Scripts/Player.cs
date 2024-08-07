@@ -98,7 +98,7 @@ public class Player : MonoBehaviour
             return;
 
         Quest targetQuest = mQuests[0];
-        targetQuest.AddAmount(1);
+        // targetQuest.AddAmount(1);
     }
 
     public void SetDirection(EDirection direction)
@@ -148,7 +148,7 @@ public class Player : MonoBehaviour
                 if (collider.tag == "NPC")
                 {
                     NPC targetNPC = collider.gameObject.GetComponent<NPC>();
-                    targetNPC.InteractTo(this);
+                    targetNPC.Interact();
 
                     // Debug.Log($"{collider.gameObject.name}");
                     break;
