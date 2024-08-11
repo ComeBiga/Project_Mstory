@@ -9,7 +9,7 @@ public class CharacterHealth : MonoBehaviour
     [SerializeField]
     private CharacterAnimation _characterAnimation;
     [SerializeField]
-    private HpBar _hpBar;
+    private HpBarSlider _hpBarSlider;
 
     private int mCurrent;
 
@@ -17,7 +17,7 @@ public class CharacterHealth : MonoBehaviour
     {
         mCurrent -= amount;
 
-        _hpBar?.Set(mCurrent);
+        _hpBarSlider?.Set(mCurrent);
         _characterAnimation.Hit();
 
         if(mCurrent <= 0)
@@ -37,7 +37,7 @@ public class CharacterHealth : MonoBehaviour
     {
         mCurrent = _max;
 
-        _hpBar?.Init(_max);
-        _hpBar?.Set(_max);
+        _hpBarSlider?.Init(_max);
+        _hpBarSlider?.Set(_max);
     }
 }
