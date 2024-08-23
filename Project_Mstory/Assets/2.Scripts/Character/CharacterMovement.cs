@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
 {
+    public bool IsMoving => mMovement.magnitude > 0.001f;
+
     [SerializeField]
     private float _moveSpeed = 5f;
     [SerializeField]
@@ -21,7 +23,7 @@ public class CharacterMovement : MonoBehaviour
     {
         mMovement = direction;
 
-        if (mMovement.magnitude > 0.001f)
+        if (IsMoving)
         {
             _characterAnimation.Walk();
 
@@ -40,6 +42,11 @@ public class CharacterMovement : MonoBehaviour
         {
             _characterAnimation.Idle();
         }
+    }
+
+    public void StopMove()
+    {
+        mMovement = Vector2.zero;
     }
 
     private void Start()

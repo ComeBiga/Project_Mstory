@@ -18,7 +18,7 @@ public class CharacterHealth : MonoBehaviour
         mCurrent -= amount;
 
         _hpBarSlider?.Set(mCurrent);
-        _characterAnimation.Hit();
+        // _characterAnimation.Hit();
 
         if(mCurrent <= 0)
         {

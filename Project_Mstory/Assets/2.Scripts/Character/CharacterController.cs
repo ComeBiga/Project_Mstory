@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class CharacterController : MonoBehaviour
 {
+    public bool Controlling => mbControlling;
+
     [SerializeField]
     private CharacterMovement _characterMovement;
     [SerializeField]
     private CharacterAttack _characterAttack;
     [SerializeField]
     private CircleCollider2D _interactCircle;
+
+    private bool mbControlling = false;
 
     // Start is called before the first frame update
     void Start()
@@ -43,14 +47,28 @@ public class CharacterController : MonoBehaviour
             _characterAttack.Attack();
         }
 
-        if (_characterAttack.IsAttacking)
-            return;
+        //if (_characterAttack.IsAttacking)
+        //    return;
 
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
         var direction = new Vector2(horizontal, vertical).normalized;
 
-        _characterMovement.Move(direction);
+        if(direction.magnitude >= .001f)
+        {
+            _characterAttack.StopAttack();
+            _characterMovement.Move(direction);
+            mbControlling = true;
+        }
+        else if(mbControlling && direction.magnitude < .001f)
+        {
+            _characterMovement.Move(Vector2.zero);
+            mbControlling = false;
+        }
+        else
+        {
+            _characterAttack.Attack();
+        }
     }
 }

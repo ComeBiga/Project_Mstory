@@ -7,31 +7,58 @@ public class CharacterAttack : MonoBehaviour
     public bool IsAttacking => mbIsAttacking;
 
     [SerializeField]
-    private int _attackDamage = 10;
+    protected int _attackDamage = 10;
     [SerializeField]
-    private float _attackDelay = .5f;
+    protected float _attackDelay = .5f;
     [SerializeField]
-    private string _targetTag;
+    protected string _targetTag;
     [SerializeField]
-    private CharacterAnimation _characterAnimation;
+    protected CharacterAnimation _characterAnimation;
     [SerializeField]
-    private BoxCollider2D _attackBox;
+    protected CircleCollider2D _attackCircle;
+    [SerializeField]
+    protected BoxCollider2D _attackBox;
 
     private bool mbIsAttacking = false;
+    private Coroutine mAttackCoroutine = null;
 
-    public void Attack()
+    public virtual void Attack()
     {
         if (!mbIsAttacking)
         {
-            StartCoroutine(eAttack());
+            mAttackCoroutine = StartCoroutine(eAttack());
         }
     }
 
+    public void AttackLoop()
+    {
+        if (!mbIsAttacking)
+        {
+            mAttackCoroutine = StartCoroutine(eAttackLoop());
+        }
+    }
+
+    public void StopAttack()
+    {
+        if (mAttackCoroutine == null)
+            return;
+
+        mbIsAttacking = false;
+        StopCoroutine(mAttackCoroutine);
+    }
+        
     public void Rotate(int direction)
     {
         transform.localScale = new Vector3(direction, 1, 1);
     }
 
+    private IEnumerator eAttackLoop()
+    {
+        while(true)
+        {
+            yield return eAttack();
+        }
+    }
 
     private IEnumerator eAttack()
     {
